@@ -7,34 +7,46 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using CustomersServiceApp.Data;
 using CustomersServiceApp.Models;
+using Microsoft.Extensions.Logging;
 
 namespace CustomersServiceApp.Pages.Customers
 {
     public class DeleteModel : PageModel
     {
         private readonly CustomersServiceApp.Data.CustomerContext _context;
+        private readonly ILogger<DeleteModel> _logger;
 
-        public DeleteModel(CustomersServiceApp.Data.CustomerContext context)
+        public DeleteModel(CustomersServiceApp.Data.CustomerContext context,
+                          ILogger<DeleteModel> logger)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         [BindProperty]
         public Customer Customer { get; set; }
+        public string ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? id, bool? saveChangesError = false)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Customer = await _context.Customers.FirstOrDefaultAsync(m => m.id == id);
+            Customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(m => m.id == id);
 
             if (Customer == null)
             {
                 return NotFound();
             }
+
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ErrorMessage = String.Format("Delete {ID} failed. Try again", id);
+            }
+
             return Page();
         }
 
@@ -45,15 +57,28 @@ namespace CustomersServiceApp.Pages.Customers
                 return NotFound();
             }
 
-            Customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
+            // Customer = await _context.Customers.FindAsync(id);
 
-            if (Customer != null)
+            if (customer == null)
             {
-                _context.Customers.Remove(Customer);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
 
-            return RedirectToPage("./Index");
+            try
+            {
+                _context.Customers.Remove(customer);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
+            }
+
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, ErrorMessage);
+
+                return RedirectToAction("./Delete",
+                                     new { id, saveChangesError = true });
+            }
         }
     }
 }

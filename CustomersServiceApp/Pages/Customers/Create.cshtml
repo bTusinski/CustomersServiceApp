@@ -14,24 +14,19 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Customer.name" class="control-label"></label>
-                <input asp-for="Customer.name" class="form-control" />
-                <span asp-validation-for="Customer.name" class="text-danger"></span>
+                <label asp-for="CustomerVM.name" class="control-label"></label>
+                <input asp-for="CustomerVM.name" class="form-control" />
+                <span asp-validation-for="CustomerVM.name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Customer.name" class="control-label"></label>
-                <input asp-for="Customer.name" class="form-control" />
-                <span asp-validation-for="Customer.name" class="text-danger"></span>
+                <label asp-for="CustomerVM.surname" class="control-label"></label>
+                <input asp-for="CustomerVM.surname" class="form-control" />
+                <span asp-validation-for="CustomerVM.surname" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Customer.name" class="control-label"></label>
-                <input asp-for="Customer.surname" class="form-control" />
-                <span asp-validation-for="Customer.surname" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Customer.surname" />
-                </label>
+                <label asp-for="CustomerVM.birthyear" class="control-label"></label>
+                <input asp-for="CustomerVM.birthyear" class="form-control" />
+                <span asp-validation-for="CustomerVM.birthyear" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -44,6 +39,7 @@
     <a asp-page="Index">Back to List</a>
 </div>
 
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_Validationtial");}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

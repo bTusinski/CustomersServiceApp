@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using CustomersServiceApp.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CustomersServiceApp
 {
@@ -26,13 +27,19 @@ namespace CustomersServiceApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var myMaxModelBindingCollectionSize = Convert.ToInt32(
+                Configuration["MyMaxModelBindingCollectionSize"] ?? "100");
+
+            services.Configure<MvcOptions>(options =>
+                   options.MaxModelBindingCollectionSize = myMaxModelBindingCollectionSize);
+
             services.AddRazorPages();
 
-            //services.AddDbContext<CustomerContext>(options =>
-            //   options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
+            //options.UseSqlServer(Configuration.GetConnectionString("CustomerContext")));
 
             services.AddDbContext<CustomerContext>(options => options.UseNpgsql(Configuration.GetConnectionString("CustomerContext")));
 
+            //services.AddDatabaseDeveloperPageExceptionFilter();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

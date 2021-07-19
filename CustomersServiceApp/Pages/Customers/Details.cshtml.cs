@@ -28,7 +28,7 @@ namespace CustomersServiceApp.Pages.Customers
                 return NotFound();
             }
 
-            Customer = await _context.Customers.FirstOrDefaultAsync(m => m.id == id);
+            Customer = await _context.Customers.AsNoTracking().FirstOrDefaultAsync(m => m.id == id);
 
             if (Customer == null)
             {

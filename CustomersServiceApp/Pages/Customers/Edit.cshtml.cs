@@ -30,7 +30,7 @@ namespace CustomersServiceApp.Pages.Customers
                 return NotFound();
             }
 
-            Customer = await _context.Customers.FirstOrDefaultAsync(m => m.id == id);
+            Customer = await _context.Customers.FindAsync(id);
 
             if (Customer == null)
             {
@@ -41,32 +41,25 @@ namespace CustomersServiceApp.Pages.Customers
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
-            if (!ModelState.IsValid)
+            var customerToUpdate = await _context.Customers.FindAsync(id);
+
+            if (customerToUpdate == null)
             {
-                return Page();
+                return NotFound();
             }
 
-            _context.Attach(Customer).State = EntityState.Modified;
-
-            try
+            if (await TryUpdateModelAsync<Customer>(
+                 customerToUpdate,
+                 "customer",
+                 s => s.name, s => s.surname, s => s.birthyear))
             {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CustomerExists(Customer.id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return RedirectToPage("./Index");
             }
 
-            return RedirectToPage("./Index");
+            return Page();
         }
 
         private bool CustomerExists(int id)
