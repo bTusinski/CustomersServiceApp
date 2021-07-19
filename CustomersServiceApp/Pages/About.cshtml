@@ -1,0 +1,32 @@
+﻿@page
+@model CustomersServiceApp.Pages.AboutModel
+@{
+}
+@{
+    ViewData["Title"] = "Customer Body Statistics";
+}
+
+<h2>Customer Body Statistics</h2>
+
+<table>
+    <tr>
+        <th>
+            Birth Year
+        </th>
+        <th>
+            Customers
+        </th>
+    </tr>
+
+    @foreach (var item in Model.Customers)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.birthyear)
+            </td>
+            <td>
+                @item.CustomerCount
+            </td>
+        </tr>
+    }
+</table>

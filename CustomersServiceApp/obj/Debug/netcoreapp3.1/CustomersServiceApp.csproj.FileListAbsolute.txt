@@ -154,3 +154,4 @@ C:\Users\Admin\source\repos\CustomersServiceApp\CustomersServiceApp\bin\Debug\ne
 C:\Users\Admin\source\repos\CustomersServiceApp\CustomersServiceApp\bin\Debug\netcoreapp3.1\Npgsql.EntityFrameworkCore.PostgreSQL.Design.dll
 C:\Users\Admin\source\repos\CustomersServiceApp\CustomersServiceApp\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore.dll
 C:\Users\Admin\source\repos\CustomersServiceApp\CustomersServiceApp\obj\Debug\netcoreapp3.1\CustomersServiceApp.csproj.AssemblyReference.cache
+C:\Users\Admin\source\repos\CustomersServiceApp\CustomersServiceApp\obj\Debug\netcoreapp3.1\Razor\Pages\About.cshtml.g.cs

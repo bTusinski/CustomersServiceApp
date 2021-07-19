@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CustomersServiceApp.Data;
 using CustomersServiceApp.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace CustomersServiceApp.Pages.Customers
 {
@@ -15,21 +16,73 @@ namespace CustomersServiceApp.Pages.Customers
     {
         private readonly CustomersServiceApp.Data.CustomerContext _context;
         private readonly MvcOptions _mvcOptions;
+        private readonly IConfiguration Configuration;
 
-        public IndexModel(CustomersServiceApp.Data.CustomerContext context, IOptions<MvcOptions> mvcOptions)
+        public IndexModel(CustomersServiceApp.Data.CustomerContext context, IOptions<MvcOptions> mvcOptions, IConfiguration configuration)
         {
             _context = context;
             _mvcOptions = mvcOptions.Value;
+            Configuration = configuration;
         }
 
-        public IList<Customer> CustomerList { get;set; }
+        public string NameSort { get; set; }
+        public string BirthYearSort { get; set; }
+        public string CurrentFilter { get; set; }
+        public string CurrentSort { get; set; }
 
-        public async Task OnGetAsync()
+        public PaginatedList<Customer> CustomerList { get; set; }
+
+        // public IList<Customer> CustomerList { get; set; }
+
+        public async Task OnGetAsync(string sortOrder, string currentFilter, string searchString, int? pageIndex)
         {
-            CustomerList = await _context.Customers.ToListAsync();
-            //Customer customer  = new Customer { Id = 1, Name = "Carson", Surname = "Alexander", BirthYear = int.Parse("1996") };
-           // CustomerList = new List<Customer>() { customer };
-            // Customer = await _context.Customers.Take(_mvcOptions.MaxModelBindingCollectionSize).ToListAsync();
+
+            CurrentSort = sortOrder;
+            NameSort = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            BirthYearSort = sortOrder == "BirthYear" ? "birthYear_desc" : "BirthYear";
+
+            if (searchString != null)
+            {
+                pageIndex = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            CurrentFilter = searchString;
+
+            IQueryable<Customer> customersIQ = from s in _context.Customers
+                                             select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                customersIQ = customersIQ.Where(s => s.surname.Contains(searchString)
+                                       || s.name.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    customersIQ = customersIQ.OrderByDescending(s => s.name);
+                    break;
+                case "BirthYear":
+                    customersIQ = customersIQ.OrderBy(s => s.birthyear);
+                    break;
+                case "birthYear_desc":
+                    customersIQ = customersIQ.OrderByDescending(s => s.birthyear);
+                    break;
+                default:
+                    customersIQ = customersIQ.OrderBy(s => s.surname);
+                    break;
+            }
+
+            var pageSize = Configuration.GetValue("PageSize", 4);
+            CustomerList = await PaginatedList<Customer>.CreateAsync(
+                customersIQ.AsNoTracking(), pageIndex ?? 1, pageSize);
+
+            //CustomerList = await customersIQ.AsNoTracking().ToListAsync();
+            // CustomerList = await _context.Customers.ToListAsync();
         }
     }
 }

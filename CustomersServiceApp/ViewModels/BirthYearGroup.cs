@@ -6,11 +6,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CustomersServiceApp.ViewModels
 {
-    public class CustomerVM
+    public class BirthYearGroup
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string surname { get; set; }
         public int birthyear { get; set; }
+        public int CustomerCount { get; set; }
     }
+
 }
+
