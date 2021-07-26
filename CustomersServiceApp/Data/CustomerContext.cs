@@ -19,7 +19,8 @@ namespace CustomersServiceApp.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>().ToTable("customer"); // Niekoniecznie ("Customer")
+            modelBuilder.Entity<Customer>().ToTable("customer"); 
         }
+
     }
 }

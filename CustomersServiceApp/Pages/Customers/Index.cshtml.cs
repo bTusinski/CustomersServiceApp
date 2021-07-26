@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using CustomersServiceApp.Data;
 using CustomersServiceApp.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+
 
 namespace CustomersServiceApp.Pages.Customers
 {
@@ -32,8 +31,6 @@ namespace CustomersServiceApp.Pages.Customers
 
         public PaginatedList<Customer> CustomerList { get; set; }
 
-        // public IList<Customer> CustomerList { get; set; }
-
         public async Task OnGetAsync(string sortOrder, string currentFilter, string searchString, int? pageIndex)
         {
 
@@ -53,7 +50,7 @@ namespace CustomersServiceApp.Pages.Customers
             CurrentFilter = searchString;
 
             IQueryable<Customer> customersIQ = from s in _context.Customers
-                                             select s;
+                                               select s;
 
             if (!String.IsNullOrEmpty(searchString))
             {
@@ -79,10 +76,10 @@ namespace CustomersServiceApp.Pages.Customers
 
             var pageSize = Configuration.GetValue("PageSize", 4);
             CustomerList = await PaginatedList<Customer>.CreateAsync(
-                customersIQ.AsNoTracking(), pageIndex ?? 1, pageSize);
-
-            //CustomerList = await customersIQ.AsNoTracking().ToListAsync();
-            // CustomerList = await _context.Customers.ToListAsync();
+            customersIQ.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
+
+
     }
 }
+

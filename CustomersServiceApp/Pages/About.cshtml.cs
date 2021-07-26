@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CustomersServiceApp.Models;
+
 
 namespace CustomersServiceApp.Pages
 {
@@ -23,8 +23,8 @@ namespace CustomersServiceApp.Pages
         public async Task OnGetAsync()
         {
             IQueryable<BirthYearGroup> data =
-                from student in _context.Customers
-                group student by student.birthyear into dateGroup
+                from customer in _context.Customers
+                group customer by customer.birthyear into dateGroup
                 select new BirthYearGroup()
                 {
                     birthyear = dateGroup.Key,

@@ -18,7 +18,8 @@
             <input type="text" name="SearchString" value="@Model.CurrentFilter" />
             <input type="submit" value="Search" class="btn btn-primary" /> |
             <a asp-page="./Index">Back to full List</a> |
-            <a asp-page="/About">Info</a>
+            <a asp-page="/About">Info</a> |
+            <a asp-page="./Csv">CSV</a> |
         </p>
     </div>
 </form>
@@ -86,3 +87,5 @@
    class="btn btn-primary @nextDisabled">
     Next
 </a>
+
+
