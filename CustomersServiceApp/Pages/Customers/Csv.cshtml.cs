@@ -8,24 +8,28 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using CustomersServiceApp.Models;
 using System.Collections.Generic;
-
+using System.Text;
+using System.Linq;
 
 namespace CustomersServiceApp.Pages.Customers
 {
     public class CsvModel : PageModel
     {
-        
+
         private readonly CustomersServiceApp.Data.CustomerContext _context;
 
         private readonly IWebHostEnvironment _environment;
 
-        public CsvModel(CustomersServiceApp.Data.CustomerContext context, IWebHostEnvironment environment, IConfiguration configuration)
+        public CsvModel(CustomersServiceApp.Data.CustomerContext context, IWebHostEnvironment environment)
         {
             _environment = environment;
             _context = context;
         }
         [BindProperty]
         public IFormFile Upload { get; set; }
+
+        //[BindProperty]
+        //public IFormFile Export { get; set; }
 
         public async Task OnPostAsync()
         {
@@ -75,10 +79,19 @@ namespace CustomersServiceApp.Pages.Customers
                         await _context.SaveChangesAsync();
                         RedirectToPage("./Index");
                     }
-
                 }
-
             }
+        }
+        public async Task<IActionResult> Export()
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("id,name,surname,birthyear");
+            foreach (var customer in _context.Customers)
+            {
+                builder.AppendLine($"{customer.id},{customer.name},{customer.surname},{customer.birthyear}");
+            }
+
+            return File(Encoding.UTF8.GetBytes(builder.ToString()), "text/csv", "Customers.csv");           
         }
     }
 }

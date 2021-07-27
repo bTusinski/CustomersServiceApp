@@ -4,17 +4,64 @@
 }
 <h1>CSV</h1>
 
-<h3>Upload .csv file to the database or export database to .csv file.</h3>
+<h4>Upload .csv file to the database or export database to .csv file.</h4>
 
-<div class="container">
+<div class="container mt-5">
     <div class="row">
         <form asp-controller="CsvModel" asp-action="Index" method="post" enctype="multipart/form-data">
-            <input type="file" asp-for="Upload"/>
+            <input type="file" id="fileupload" asp-for="Upload" />
             <hr />
-            <button type="submit" class="btn btn-primary">Upload .csv</button>
-            <button type="submit" class="btn btn-primary">Export .csv</button>
+            <button type="submit" class="btn btn-primary" id="btnupload">Upload .csv</button>
+            <a asp-page="./ExportCsv">Export .csv</a> |
             <a asp-page="./Index">Back to List</a>
         </form>
     </div>
 </div>
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#btnupload').on('click', function () {
+            var fileExtension = ['csv'];
+            var filename = $('#fileupload').val();
+            if (filename.length == 0) {
+                alert("Please select a file.");
+                return false;
+            }
+            else {
+                var extension = filename.replace(/^.*\./, '');
+                if ($.inArray(extension, fileExtension) == -1) {
+                    alert("Please select only .csv files.");
+                    return false;
+                }
+            }
+            var fdata = new FormData();
+            var fileUpload = $("#fileupload").get(0);
+            var files = fileUpload.files;
+            fdata.append(files[0].name, files[0]);
+            $.ajax({
+                type: "POST",
+                url: "Customers/Csv",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: fdata,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.length == 0)
+                        alert('Some error occured while uploading');
+                    else {
+                        $('#divPrint').html(response);
+                    }
+                },
+                error: function (e) {
+                    $('#divPrint').html(e.responseText);
+                }
+            });
+        })
+    });
+
+</script>
 
